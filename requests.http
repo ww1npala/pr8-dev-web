@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:3000
+
+### 1. Створити вид тварини (AnimalTypeEntity — сторона One у зв'язку 1:M)
+POST {{baseUrl}}/animal-types
+Content-Type: application/json
+
+{
+  "name": "Коти",
+  "description": "Товари та харчування для домашніх котів"
+}
+
+### 2. Створити другий вид тварини
+POST {{baseUrl}}/animal-types
+Content-Type: application/json
+
+{
+  "name": "Собаки",
+  "description": "Корми та аксесуари для собак"
+}
+
+### 3. Отримати список усіх видів тварин
+GET {{baseUrl}}/animal-types
+Accept: application/json
+
+### 4. Створити зоотовар із зв'язком 1:M (animalTypeId) та каскадним збереженням інгредієнтів M:N (ingredients)
+# Підставте реальний UUID з відповіді запиту №1 у поле animalTypeId
+@animalTypeId = 00000000-0000-0000-0000-000000000000
+POST {{baseUrl}}/pet-products
+Content-Type: application/json
+
+{
+  "title": "Сухий корм Royal Canin Sterilised 2 кг",
+  "price": 1250.50,
+  "brand": "Royal Canin",
+  "animalTypeId": "{{animalTypeId}}",
+  "ingredients": ["Лосось", "Рис", "Таурин"]
+}
+
+### 5. Отримати зоотовар за UUID із завантаженням relations: ['animalType', 'ingredients']
+@productId = 00000000-0000-0000-0000-000000000000
+GET {{baseUrl}}/pet-products/{{productId}}
+Accept: application/json
+
+### 6. Фільтрація зоотоварів за інгредієнтом через QueryBuilder (Many-to-Many)
+GET {{baseUrl}}/pet-products?ingredient=Лосось
+Accept: application/json
+
+### 7. Фільтрація зоотоварів за видом тварини через QueryBuilder (Many-to-One)
+GET {{baseUrl}}/pet-products?animalType=Коти
+Accept: application/json
